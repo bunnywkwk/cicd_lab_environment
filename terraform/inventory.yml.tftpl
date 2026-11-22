@@ -1,0 +1,34 @@
+---
+# Written by Terraform (terraform/ in this repo): do not edit, run terraform apply instead.
+# ansible_host = public IP (SSH from the laptop, changes on stop/start);
+# private_ip = VPC address the hosts use to reach each other (k3s join, registry pulls).
+all:
+  vars:
+    # New public IPs after every build or start: trust a new host key on first contact, still refuse a changed one.
+    ansible_ssh_common_args: "-o StrictHostKeyChecking=accept-new"
+
+# CI host: registry + Jenkins on one VM
+ci:
+  hosts:
+    rhel9-ci:
+      ansible_host: ${ci.public_ip}
+      private_ip: ${ci.private_ip}
+      ansible_user: ec2-user
+
+# k3s cluster: k3s_server is the control plane (runs Argo CD); k3s_agent hosts join it as workers
+k3s_cluster:
+  children:
+    k3s_server:
+      hosts:
+        k3s-master-1:
+          ansible_host: ${k3s["k3s-master-1"].public_ip}
+          private_ip: ${k3s["k3s-master-1"].private_ip}
+          ansible_user: ec2-user
+    k3s_agent:
+      hosts:
+%{ for name in ["k3s-worker-1", "k3s-worker-2"] ~}
+        ${name}:
+          ansible_host: ${k3s[name].public_ip}
+          private_ip: ${k3s[name].private_ip}
+          ansible_user: ec2-user
+%{ endfor ~}

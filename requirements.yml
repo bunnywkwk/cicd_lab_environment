@@ -5,17 +5,17 @@ roles:
   - name: registry
     src: https://github.com/bunnywkwk/ansible-role-registry.git
     scm: git
-    version: staging   # AWS run: firewalld install is on staging; back to main after the merge
+    version: staging
 
   - name: jenkins
     src: https://github.com/bunnywkwk/ansible-role-jenkins.git
     scm: git
-    version: staging   # AWS run: firewalld install is on staging; back to main after the merge
+    version: staging
 
   - name: k3s
     src: https://github.com/bunnywkwk/ansible-role-k3s.git
     scm: git
-    version: staging   # AWS run: firewalld install is on staging; back to main after the merge
+    version: staging
 
 collections:
   - name: ansible.posix

@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 980 580" role="img" aria-label="From the laptop, terraform apply creates the VPC, two security groups and four EC2 instances on AWS and writes the Ansible inventory; ansible-playbook configures all four over SSH. On rhel9-ci, Jenkins builds images and pushes them to the registry on port 5000. The k3s workers join the master on port 6443 and all nodes pull images from the registry over the private IP. Only my IP reaches SSH, Jenkins on 8080 and Argo CD on 30443." font-family="system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif">
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#24292f"/></marker>
+    <marker id="g" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#1a7f37"/></marker>
+  </defs>
+
+  <!-- own background: shown as an image, cannot follow the theme -->
+  <rect x="0.5" y="0.5" width="979" height="579" rx="10" fill="#ffffff" stroke="#d0d7de"/>
+
+  <!-- AWS region / VPC (dashed = network boundary) -->
+  <rect x="20" y="20" width="940" height="400" rx="8" fill="#f6f8fa" stroke="#8c959f" stroke-dasharray="6 4"/>
+  <text x="36" y="44" font-size="14" font-weight="600" fill="#24292f">AWS ap-southeast-1 · VPC cicd-vpc 10.20.0.0/24 · one public subnet + internet gateway</text>
+
+  <!-- CI security group (blue) -->
+  <rect x="40" y="60" width="340" height="340" rx="8" fill="#ffffff" stroke="#0969da" stroke-width="1.5"/>
+  <text x="54" y="82" font-size="13" font-weight="600" fill="#0969da">cicd-ci-sg</text>
+  <text x="54" y="99" font-size="12" fill="#57606a">in: 22, 8080 from my IP · 5000 from k3s nodes</text>
+
+  <rect x="60" y="115" width="300" height="200" rx="6" fill="#ddf4ff" stroke="#0969da"/>
+  <text x="210" y="138" font-size="13" font-weight="600" fill="#24292f" text-anchor="middle">rhel9-ci</text>
+  <rect x="90" y="152" width="240" height="40" rx="5" fill="#ffffff" stroke="#24292f"/>
+  <text x="210" y="177" font-size="13" fill="#24292f" text-anchor="middle">Jenkins :8080 (builds images)</text>
+  <rect x="90" y="242" width="240" height="40" rx="5" fill="#ffffff" stroke="#24292f"/>
+  <text x="210" y="267" font-size="13" fill="#24292f" text-anchor="middle">registry :5000</text>
+  <line x1="210" y1="192" x2="210" y2="240" stroke="#24292f" stroke-width="1.5" marker-end="url(#a)"/>
+  <text x="220" y="221" font-size="12" fill="#24292f">podman push</text>
+
+  <!-- k3s security group (green) -->
+  <rect x="460" y="60" width="480" height="340" rx="8" fill="#ffffff" stroke="#1a7f37" stroke-width="1.5"/>
+  <text x="474" y="82" font-size="13" font-weight="600" fill="#1a7f37">cicd-k3s-sg</text>
+  <text x="474" y="99" font-size="12" fill="#57606a">in: 22, 30443 from my IP · all traffic from the group itself</text>
+
+  <rect x="480" y="115" width="440" height="85" rx="6" fill="#dafbe1" stroke="#1a7f37"/>
+  <text x="700" y="136" font-size="13" font-weight="600" fill="#24292f" text-anchor="middle">k3s-master-1 (control plane)</text>
+  <rect x="500" y="148" width="180" height="38" rx="5" fill="#ffffff" stroke="#24292f"/>
+  <text x="590" y="172" font-size="13" fill="#24292f" text-anchor="middle">API :6443</text>
+  <rect x="720" y="148" width="180" height="38" rx="5" fill="#ffffff" stroke="#24292f"/>
+  <text x="810" y="172" font-size="13" fill="#24292f" text-anchor="middle">Argo CD :30443</text>
+
+  <rect x="480" y="290" width="205" height="60" rx="6" fill="#dafbe1" stroke="#1a7f37"/>
+  <text x="582" y="325" font-size="13" font-weight="600" fill="#24292f" text-anchor="middle">k3s-worker-1</text>
+  <rect x="715" y="290" width="205" height="60" rx="6" fill="#dafbe1" stroke="#1a7f37"/>
+  <text x="817" y="325" font-size="13" font-weight="600" fill="#24292f" text-anchor="middle">k3s-worker-2</text>
+
+  <line x1="582" y1="290" x2="582" y2="189" stroke="#24292f" stroke-width="1.5" marker-end="url(#a)"/>
+  <line x1="800" y1="290" x2="650" y2="189" stroke="#24292f" stroke-width="1.5" marker-end="url(#a)"/>
+  <text x="592" y="245" font-size="12" fill="#24292f">join :6443</text>
+
+  <!-- image pull over the private network (green) -->
+  <line x1="332" y1="268" x2="478" y2="312" stroke="#1a7f37" stroke-width="1.5" marker-end="url(#g)"/>
+  <text x="405" y="240" font-size="12" fill="#1a7f37" text-anchor="middle">image pull :5000</text>
+  <text x="405" y="255" font-size="12" fill="#1a7f37" text-anchor="middle">(private IP)</text>
+
+  <!-- laptop -->
+  <rect x="20" y="460" width="940" height="100" rx="8" fill="#f6f8fa" stroke="#d0d7de"/>
+  <text x="36" y="482" font-size="13" font-weight="600" fill="#24292f">Laptop (control machine)</text>
+  <rect x="60" y="497" width="260" height="46" rx="5" fill="#ffffff" stroke="#24292f"/>
+  <text x="190" y="525" font-size="13" fill="#24292f" text-anchor="middle">terraform apply / destroy</text>
+  <rect x="360" y="497" width="260" height="46" rx="5" fill="#ffffff" stroke="#24292f"/>
+  <text x="490" y="525" font-size="13" fill="#24292f" text-anchor="middle">ansible-playbook</text>
+  <rect x="660" y="497" width="260" height="46" rx="5" fill="#ffffff" stroke="#24292f"/>
+  <text x="790" y="525" font-size="13" fill="#24292f" text-anchor="middle">browser</text>
+
+  <line x1="190" y1="497" x2="190" y2="423" stroke="#24292f" stroke-width="1.5" marker-end="url(#a)"/>
+  <text x="200" y="439" font-size="12" fill="#24292f">1 creates VPC, SGs, 4 EC2</text>
+  <text x="200" y="453" font-size="12" fill="#24292f">+ writes the inventory</text>
+  <line x1="490" y1="497" x2="490" y2="423" stroke="#24292f" stroke-width="1.5" marker-end="url(#a)"/>
+  <text x="500" y="439" font-size="12" fill="#24292f">2 SSH :22, configures</text>
+  <text x="500" y="453" font-size="12" fill="#24292f">all 4 (public IP)</text>
+  <line x1="790" y1="497" x2="790" y2="423" stroke="#24292f" stroke-width="1.5" marker-end="url(#a)"/>
+  <text x="800" y="439" font-size="12" fill="#24292f">3 Jenkins :8080,</text>
+  <text x="800" y="453" font-size="12" fill="#24292f">Argo CD :30443 (my IP)</text>
+</svg>

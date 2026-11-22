@@ -1,0 +1,6 @@
+# Provider downloads
+.terraform/
+# State holds every resource ID and the IPs: keep it local, never in Git
+*.tfstate
+*.tfstate.*
+crash.log
