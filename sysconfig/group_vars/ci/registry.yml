@@ -1,0 +1,5 @@
+---
+# Registry on the CI host: plain HTTP, no login (lab network only).
+# Jenkins and k3s read registry_port from here. Other settings keep the role defaults
+# (image registry:2.8.3, data in /var/lib/registry, weekly garbage collection, firewall opened).
+registry_port: 5000

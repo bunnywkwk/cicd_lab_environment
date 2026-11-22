@@ -1,0 +1,20 @@
+---
+# CI host: registry + Jenkins on one VM
+ci:
+  hosts:
+    rhel9-ci:
+      ansible_host: 192.168.122.135
+
+# k3s cluster: k3s_server is the control plane (runs Argo CD); k3s_agent hosts join it as workers
+k3s_cluster:
+  children:
+    k3s_server:
+      hosts:
+        k3s-master-1:
+          ansible_host: 192.168.122.165
+    k3s_agent:
+      hosts:
+        k3s-worker-1:
+          ansible_host: 192.168.122.26
+        k3s-worker-2:
+          ansible_host: 192.168.122.139

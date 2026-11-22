@@ -1,0 +1,74 @@
+---
+# The main playbook, the orchestrator of the CI/CD lab.
+# No play gathers facts: the roles do not use them, and a play whose tasks are all
+# skipped by --tags then does not connect to its hosts at all.
+
+# Phase 1: CI host. Registry first, then Jenkins, which pushes to it.
+- name: "Phase 1: Set up the CI host (registry + Jenkins)"
+  hosts: ci
+  become: true
+  gather_facts: false
+
+  pre_tasks:
+    # Verify that the control machine runs ansible-core 2.16 or newer (the roles' minimum)
+    - name: Verify minimum Ansible control node version
+      ansible.builtin.assert:
+        that:
+          - ansible_version.full is version('2.16', '>=')
+        fail_msg: "Ansible version {{ ansible_version.full }} is too old, 2.16 or newer is needed."
+      run_once: true
+      tags:
+        - always
+
+  tasks:
+    # Container registry (registry:2 under Podman Quadlet) on port 5000
+    - name: Apply the registry role
+      ansible.builtin.include_role:
+        name: registry
+        apply:
+          tags:
+            - registry
+      tags:
+        - registry
+
+    # Jenkins (RPM, JCasC, plugins) with rootless Podman for image builds
+    - name: Apply the jenkins role
+      ansible.builtin.include_role:
+        name: jenkins
+        apply:
+          tags:
+            - jenkins
+      tags:
+        - jenkins
+
+# Phase 2: k3s server. Must be up before the agents join it.
+- name: "Phase 2: Set up the k3s server (control plane + Argo CD)"
+  hosts: k3s_server
+  become: true
+  gather_facts: false
+
+  tasks:
+    - name: Apply the k3s role as server
+      ansible.builtin.include_role:
+        name: k3s
+        apply:
+          tags:
+            - k3s
+      tags:
+        - k3s
+
+# Phase 3: k3s agents. They read the server's token and join it.
+- name: "Phase 3: Join the k3s agents"
+  hosts: k3s_agent
+  become: true
+  gather_facts: false
+
+  tasks:
+    - name: Apply the k3s role as agent
+      ansible.builtin.include_role:
+        name: k3s
+        apply:
+          tags:
+            - k3s
+      tags:
+        - k3s

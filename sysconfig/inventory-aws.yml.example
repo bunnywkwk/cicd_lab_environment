@@ -1,0 +1,38 @@
+---
+# AWS inventory template. The real file, sysconfig/inventory-aws.yml, holds live public IPs and is not in Git.
+# Either copy this file to sysconfig/inventory-aws.yml and fill in the IPs (EC2 console or
+# `aws ec2 describe-instances`), or let Terraform write it (terraform apply).
+# ansible_host = public IP (SSH from the laptop, changes on stop/start);
+# private_ip = VPC address the hosts use to reach each other (k3s join, registry pulls).
+all:
+  vars:
+    # New public IPs after every build or start: trust a new host key on first contact, still refuse a changed one.
+    ansible_ssh_common_args: "-o StrictHostKeyChecking=accept-new"
+
+# CI host: registry + Jenkins on one VM
+ci:
+  hosts:
+    rhel9-ci:
+      ansible_host: <rhel9-ci public IP>
+      private_ip: <rhel9-ci private IP>
+      ansible_user: ec2-user
+
+# k3s cluster: k3s_server is the control plane (runs Argo CD); k3s_agent hosts join it as workers
+k3s_cluster:
+  children:
+    k3s_server:
+      hosts:
+        k3s-master-1:
+          ansible_host: <k3s-master-1 public IP>
+          private_ip: <k3s-master-1 private IP>
+          ansible_user: ec2-user
+    k3s_agent:
+      hosts:
+        k3s-worker-1:
+          ansible_host: <k3s-worker-1 public IP>
+          private_ip: <k3s-worker-1 private IP>
+          ansible_user: ec2-user
+        k3s-worker-2:
+          ansible_host: <k3s-worker-2 public IP>
+          private_ip: <k3s-worker-2 private IP>
+          ansible_user: ec2-user

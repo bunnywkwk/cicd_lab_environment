@@ -1,0 +1,258 @@
+
+PLAY [Phase 1: Set up the CI host (registry + Jenkins)] ************************
+
+TASK [Verify minimum Ansible control node version] *****************************
+ok: [rhel9-ci] => {
+    "changed": false,
+    "msg": "All assertions passed"
+}
+
+TASK [Apply the registry role] *************************************************
+included: registry for rhel9-ci
+
+TASK [registry : INSTALL | Install Podman] *************************************
+ok: [rhel9-ci]
+
+TASK [registry : SERVICE | Create the data folder] *****************************
+changed: [rhel9-ci]
+
+TASK [registry : SERVICE | Install the registry Quadlet unit] ******************
+changed: [rhel9-ci]
+
+TASK [registry : SERVICE | Install firewalld] **********************************
+changed: [rhel9-ci]
+
+TASK [registry : SERVICE | Start and enable firewalld] *************************
+changed: [rhel9-ci]
+
+TASK [registry : SERVICE | Start the registry] *********************************
+changed: [rhel9-ci]
+
+TASK [registry : SERVICE | Open the registry port] *****************************
+changed: [rhel9-ci]
+
+TASK [registry : GC | Install the garbage-collection service and timer] ********
+changed: [rhel9-ci] => (item=service)
+changed: [rhel9-ci] => (item=timer)
+
+TASK [registry : GC | Enable the garbage-collection timer] *********************
+changed: [rhel9-ci]
+
+TASK [Apply the jenkins role] **************************************************
+included: jenkins for rhel9-ci
+
+TASK [jenkins : INSTALL | Import the Jenkins package signing key] **************
+changed: [rhel9-ci]
+
+TASK [jenkins : INSTALL | Add the Jenkins LTS repository] **********************
+changed: [rhel9-ci]
+
+TASK [jenkins : INSTALL | Install Jenkins, Java and the build tools] ***********
+changed: [rhel9-ci]
+
+TASK [jenkins : INSTALL | Install yq] ******************************************
+changed: [rhel9-ci]
+
+TASK [jenkins : INSTALL | Download the Jenkins plugin manager] *****************
+changed: [rhel9-ci]
+
+TASK [jenkins : PODMAN | Give jenkins a subordinate UID and GID range] *********
+changed: [rhel9-ci] => (item=/etc/subuid)
+changed: [rhel9-ci] => (item=/etc/subgid)
+
+TASK [jenkins : PODMAN | Enable linger for jenkins] ****************************
+changed: [rhel9-ci]
+
+TASK [jenkins : PODMAN | Allow the plain-HTTP registries] **********************
+changed: [rhel9-ci]
+
+TASK [jenkins : CONFIG | Read the jenkins user's UID] **************************
+ok: [rhel9-ci]
+
+TASK [jenkins : CONFIG | Create JENKINS_HOME] **********************************
+changed: [rhel9-ci]
+
+TASK [jenkins : CONFIG | Make JENKINS_HOME the jenkins user's home] ************
+ok: [rhel9-ci]
+
+TASK [jenkins : CONFIG | Create the systemd drop-in folder] ********************
+changed: [rhel9-ci]
+
+TASK [jenkins : CONFIG | Install the systemd override (home, port, JVM, JCasC, Podman runtime dir)] ***
+changed: [rhel9-ci]
+
+TASK [jenkins : CONFIG | Write the plugin list] ********************************
+changed: [rhel9-ci]
+
+TASK [jenkins : CONFIG | Write the JCasC file] *********************************
+changed: [rhel9-ci]
+
+TASK [jenkins : SERVICE | Install plugins and apply changes before the start] ***
+
+RUNNING HANDLER [registry : Restart registry] **********************************
+changed: [rhel9-ci]
+
+RUNNING HANDLER [jenkins : Install jenkins plugins] ****************************
+changed: [rhel9-ci]
+
+RUNNING HANDLER [jenkins : Restart jenkins] ************************************
+changed: [rhel9-ci]
+
+TASK [jenkins : SERVICE | Install firewalld] ***********************************
+ok: [rhel9-ci]
+
+TASK [jenkins : SERVICE | Start and enable firewalld] **************************
+ok: [rhel9-ci]
+
+TASK [jenkins : SERVICE | Start and enable Jenkins] ****************************
+changed: [rhel9-ci]
+
+TASK [jenkins : SERVICE | Open the Jenkins port] *******************************
+changed: [rhel9-ci]
+
+PLAY [Phase 2: Set up the k3s server (control plane + Argo CD)] ****************
+
+TASK [Apply the k3s role as server] ********************************************
+included: k3s for k3s-master-1
+
+TASK [k3s : CONFIG | Read the cluster token from the server] *******************
+skipping: [k3s-master-1]
+
+TASK [k3s : CONFIG | Use the server's token] ***********************************
+skipping: [k3s-master-1]
+
+TASK [k3s : CONFIG | Create the k3s config folder] *****************************
+changed: [k3s-master-1]
+
+TASK [k3s : CONFIG | Write config.yaml] ****************************************
+changed: [k3s-master-1]
+
+TASK [k3s : CONFIG | Write registries.yaml (plain-HTTP registries)] ************
+changed: [k3s-master-1]
+
+TASK [k3s : FIREWALL | Install firewalld] **************************************
+changed: [k3s-master-1]
+
+TASK [k3s : FIREWALL | Start and enable firewalld] *****************************
+changed: [k3s-master-1]
+
+TASK [k3s : FIREWALL | Open the node ports] ************************************
+changed: [k3s-master-1] => (item=10250/tcp)
+changed: [k3s-master-1] => (item=8472/udp)
+
+TASK [k3s : FIREWALL | Open the server ports] **********************************
+changed: [k3s-master-1] => (item=6443/tcp)
+changed: [k3s-master-1] => (item=30443/tcp)
+
+TASK [k3s : FIREWALL | Trust the pod and service networks] *********************
+changed: [k3s-master-1] => (item=10.42.0.0/16)
+changed: [k3s-master-1] => (item=10.43.0.0/16)
+
+TASK [k3s : INSTALL | Read the installed k3s version] **************************
+ok: [k3s-master-1]
+
+TASK [k3s : INSTALL | Download the pinned k3s install script] ******************
+changed: [k3s-master-1]
+
+TASK [k3s : INSTALL | Install k3s] *********************************************
+changed: [k3s-master-1]
+
+TASK [k3s : INSTALL | Start and enable k3s] ************************************
+ok: [k3s-master-1]
+
+TASK [k3s : ARGOCD | Create the k3s manifests folder] **************************
+ok: [k3s-master-1]
+
+TASK [k3s : ARGOCD | Write the Argo CD HelmChart manifest] *********************
+changed: [k3s-master-1]
+
+RUNNING HANDLER [k3s : Restart k3s] ********************************************
+changed: [k3s-master-1]
+
+PLAY [Phase 3: Join the k3s agents] ********************************************
+
+TASK [Apply the k3s role as agent] *********************************************
+included: k3s for k3s-worker-1, k3s-worker-2
+
+TASK [k3s : CONFIG | Read the cluster token from the server] *******************
+ok: [k3s-worker-2 -> k3s-master-1(54.251.201.186)]
+ok: [k3s-worker-1 -> k3s-master-1(54.251.201.186)]
+
+TASK [k3s : CONFIG | Use the server's token] ***********************************
+ok: [k3s-worker-1]
+ok: [k3s-worker-2]
+
+TASK [k3s : CONFIG | Create the k3s config folder] *****************************
+changed: [k3s-worker-1]
+changed: [k3s-worker-2]
+
+TASK [k3s : CONFIG | Write config.yaml] ****************************************
+changed: [k3s-worker-1]
+changed: [k3s-worker-2]
+
+TASK [k3s : CONFIG | Write registries.yaml (plain-HTTP registries)] ************
+changed: [k3s-worker-1]
+changed: [k3s-worker-2]
+
+TASK [k3s : FIREWALL | Install firewalld] **************************************
+changed: [k3s-worker-1]
+changed: [k3s-worker-2]
+
+TASK [k3s : FIREWALL | Start and enable firewalld] *****************************
+changed: [k3s-worker-1]
+changed: [k3s-worker-2]
+
+TASK [k3s : FIREWALL | Open the node ports] ************************************
+changed: [k3s-worker-1] => (item=10250/tcp)
+changed: [k3s-worker-2] => (item=10250/tcp)
+changed: [k3s-worker-1] => (item=8472/udp)
+changed: [k3s-worker-2] => (item=8472/udp)
+
+TASK [k3s : FIREWALL | Open the server ports] **********************************
+skipping: [k3s-worker-1] => (item=6443/tcp) 
+skipping: [k3s-worker-1] => (item=30443/tcp) 
+skipping: [k3s-worker-2] => (item=6443/tcp) 
+skipping: [k3s-worker-1]
+skipping: [k3s-worker-2] => (item=30443/tcp) 
+skipping: [k3s-worker-2]
+
+TASK [k3s : FIREWALL | Trust the pod and service networks] *********************
+changed: [k3s-worker-2] => (item=10.42.0.0/16)
+changed: [k3s-worker-1] => (item=10.42.0.0/16)
+changed: [k3s-worker-1] => (item=10.43.0.0/16)
+changed: [k3s-worker-2] => (item=10.43.0.0/16)
+
+TASK [k3s : INSTALL | Read the installed k3s version] **************************
+ok: [k3s-worker-2]
+ok: [k3s-worker-1]
+
+TASK [k3s : INSTALL | Download the pinned k3s install script] ******************
+changed: [k3s-worker-1]
+changed: [k3s-worker-2]
+
+TASK [k3s : INSTALL | Install k3s] *********************************************
+changed: [k3s-worker-1]
+changed: [k3s-worker-2]
+
+TASK [k3s : INSTALL | Start and enable k3s] ************************************
+ok: [k3s-worker-1]
+ok: [k3s-worker-2]
+
+TASK [k3s : ARGOCD | Create the k3s manifests folder] **************************
+skipping: [k3s-worker-1]
+skipping: [k3s-worker-2]
+
+TASK [k3s : ARGOCD | Write the Argo CD HelmChart manifest] *********************
+skipping: [k3s-worker-1]
+skipping: [k3s-worker-2]
+
+RUNNING HANDLER [k3s : Restart k3s] ********************************************
+changed: [k3s-worker-1]
+changed: [k3s-worker-2]
+
+PLAY RECAP *********************************************************************
+k3s-master-1               : ok=16   changed=12   unreachable=0    failed=0    skipped=2    rescued=0    ignored=0   
+k3s-worker-1               : ok=15   changed=10   unreachable=0    failed=0    skipped=3    rescued=0    ignored=0   
+k3s-worker-2               : ok=15   changed=10   unreachable=0    failed=0    skipped=3    rescued=0    ignored=0   
+rhel9-ci                   : ok=34   changed=26   unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+

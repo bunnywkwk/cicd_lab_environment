@@ -1,0 +1,8 @@
+# Ansible temporary files
+.ansible/
+
+# Roles are installed by ansible-galaxy from requirements.yml
+roles/*
+
+# Live AWS inventory (public IPs, written by Terraform): template is sysconfig/inventory-aws.yml.example
+sysconfig/inventory-aws.yml

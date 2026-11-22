@@ -1,0 +1,8 @@
+---
+# Jenkins on the CI host
+jenkins_admin_user: admin
+jenkins_url: "http://{{ ansible_host }}:8080/"
+jenkins_insecure_registries:
+  - "localhost:{{ registry_port }}"   # the registry on this same VM, plain HTTP
+
+# jenkins_admin_password: role default is admin; to change it, add it with ansible-vault (README, step 2)

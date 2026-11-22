@@ -1,0 +1,133 @@
+
+PLAY [Set up the k3s server] ***************************************************
+
+TASK [Gathering Facts] *********************************************************
+ok: [k3s-master-1]
+
+TASK [k3s : Validating arguments against arg spec 'main' - k3s cluster (server + agents) on RHEL 9 with Argo CD.] ***
+ok: [k3s-master-1]
+
+TASK [k3s : CONFIG | Read the cluster token from the server] *******************
+skipping: [k3s-master-1]
+
+TASK [k3s : CONFIG | Use the server's token] ***********************************
+skipping: [k3s-master-1]
+
+TASK [k3s : CONFIG | Create the k3s config folder] *****************************
+ok: [k3s-master-1]
+
+TASK [k3s : CONFIG | Write config.yaml] ****************************************
+ok: [k3s-master-1]
+
+TASK [k3s : CONFIG | Write registries.yaml (plain-HTTP registries)] ************
+ok: [k3s-master-1]
+
+TASK [k3s : INSTALL | Read the installed k3s version] **************************
+ok: [k3s-master-1]
+
+TASK [k3s : INSTALL | Download the pinned k3s install script] ******************
+ok: [k3s-master-1]
+
+TASK [k3s : INSTALL | Install k3s] *********************************************
+skipping: [k3s-master-1]
+
+TASK [k3s : INSTALL | Start and enable k3s] ************************************
+ok: [k3s-master-1]
+
+TASK [k3s : FIREWALL | Open the node ports] ************************************
+ok: [k3s-master-1] => (item=10250/tcp)
+ok: [k3s-master-1] => (item=8472/udp)
+
+TASK [k3s : FIREWALL | Open the server ports] **********************************
+ok: [k3s-master-1] => (item=6443/tcp)
+ok: [k3s-master-1] => (item=30443/tcp)
+
+TASK [k3s : FIREWALL | Trust the pod and service networks] *********************
+ok: [k3s-master-1] => (item=10.42.0.0/16)
+ok: [k3s-master-1] => (item=10.43.0.0/16)
+
+TASK [k3s : ARGOCD | Create the k3s manifests folder] **************************
+ok: [k3s-master-1]
+
+TASK [k3s : ARGOCD | Write the Argo CD HelmChart manifest] *********************
+ok: [k3s-master-1]
+
+PLAY [Join the k3s agents] *****************************************************
+
+TASK [Gathering Facts] *********************************************************
+ok: [k3s-worker-1]
+ok: [k3s-worker-2]
+
+TASK [k3s : Validating arguments against arg spec 'main' - k3s cluster (server + agents) on RHEL 9 with Argo CD.] ***
+ok: [k3s-worker-1]
+ok: [k3s-worker-2]
+
+TASK [k3s : CONFIG | Read the cluster token from the server] *******************
+ok: [k3s-worker-2 -> k3s-master-1(192.168.122.165)]
+ok: [k3s-worker-1 -> k3s-master-1(192.168.122.165)]
+
+TASK [k3s : CONFIG | Use the server's token] ***********************************
+ok: [k3s-worker-1]
+ok: [k3s-worker-2]
+
+TASK [k3s : CONFIG | Create the k3s config folder] *****************************
+ok: [k3s-worker-1]
+ok: [k3s-worker-2]
+
+TASK [k3s : CONFIG | Write config.yaml] ****************************************
+ok: [k3s-worker-1]
+ok: [k3s-worker-2]
+
+TASK [k3s : CONFIG | Write registries.yaml (plain-HTTP registries)] ************
+ok: [k3s-worker-1]
+ok: [k3s-worker-2]
+
+TASK [k3s : INSTALL | Read the installed k3s version] **************************
+ok: [k3s-worker-1]
+ok: [k3s-worker-2]
+
+TASK [k3s : INSTALL | Download the pinned k3s install script] ******************
+ok: [k3s-worker-2]
+ok: [k3s-worker-1]
+
+TASK [k3s : INSTALL | Install k3s] *********************************************
+skipping: [k3s-worker-1]
+skipping: [k3s-worker-2]
+
+TASK [k3s : INSTALL | Start and enable k3s] ************************************
+ok: [k3s-worker-1]
+ok: [k3s-worker-2]
+
+TASK [k3s : FIREWALL | Open the node ports] ************************************
+ok: [k3s-worker-1] => (item=10250/tcp)
+ok: [k3s-worker-2] => (item=10250/tcp)
+ok: [k3s-worker-1] => (item=8472/udp)
+ok: [k3s-worker-2] => (item=8472/udp)
+
+TASK [k3s : FIREWALL | Open the server ports] **********************************
+skipping: [k3s-worker-1] => (item=6443/tcp) 
+skipping: [k3s-worker-1] => (item=30443/tcp) 
+skipping: [k3s-worker-1]
+skipping: [k3s-worker-2] => (item=6443/tcp) 
+skipping: [k3s-worker-2] => (item=30443/tcp) 
+skipping: [k3s-worker-2]
+
+TASK [k3s : FIREWALL | Trust the pod and service networks] *********************
+ok: [k3s-worker-1] => (item=10.42.0.0/16)
+ok: [k3s-worker-2] => (item=10.42.0.0/16)
+ok: [k3s-worker-2] => (item=10.43.0.0/16)
+ok: [k3s-worker-1] => (item=10.43.0.0/16)
+
+TASK [k3s : ARGOCD | Create the k3s manifests folder] **************************
+skipping: [k3s-worker-1]
+skipping: [k3s-worker-2]
+
+TASK [k3s : ARGOCD | Write the Argo CD HelmChart manifest] *********************
+skipping: [k3s-worker-1]
+skipping: [k3s-worker-2]
+
+PLAY RECAP *********************************************************************
+k3s-master-1               : ok=13   changed=0    unreachable=0    failed=0    skipped=3    rescued=0    ignored=0   
+k3s-worker-1               : ok=12   changed=0    unreachable=0    failed=0    skipped=4    rescued=0    ignored=0   
+k3s-worker-2               : ok=12   changed=0    unreachable=0    failed=0    skipped=4    rescued=0    ignored=0   
+

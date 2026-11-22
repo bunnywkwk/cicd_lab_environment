@@ -1,0 +1,69 @@
+
+PLAY [Set up the CI host] ******************************************************
+
+TASK [Gathering Facts] *********************************************************
+ok: [rhel9-ci]
+
+TASK [registry : Validating arguments against arg spec 'main' - Private registry:2 on RHEL 9 under systemd via Podman Quadlet.] ***
+ok: [rhel9-ci]
+
+TASK [jenkins : Validating arguments against arg spec 'main' - Jenkins LTS on RHEL 9 with JCasC, plugins and rootless Podman builds.] ***
+ok: [rhel9-ci]
+
+TASK [jenkins : INSTALL | Import the Jenkins package signing key] **************
+ok: [rhel9-ci]
+
+TASK [jenkins : INSTALL | Add the Jenkins LTS repository] **********************
+ok: [rhel9-ci]
+
+TASK [jenkins : INSTALL | Install Jenkins, Java and the build tools] ***********
+ok: [rhel9-ci]
+
+TASK [jenkins : INSTALL | Install yq] ******************************************
+ok: [rhel9-ci]
+
+TASK [jenkins : INSTALL | Download the Jenkins plugin manager] *****************
+ok: [rhel9-ci]
+
+TASK [jenkins : PODMAN | Give jenkins a subordinate UID and GID range] *********
+ok: [rhel9-ci] => (item=/etc/subuid)
+ok: [rhel9-ci] => (item=/etc/subgid)
+
+TASK [jenkins : PODMAN | Enable linger for jenkins] ****************************
+ok: [rhel9-ci]
+
+TASK [jenkins : PODMAN | Allow the plain-HTTP registries] **********************
+ok: [rhel9-ci]
+
+TASK [jenkins : CONFIG | Read the jenkins user's UID] **************************
+ok: [rhel9-ci]
+
+TASK [jenkins : CONFIG | Create JENKINS_HOME] **********************************
+ok: [rhel9-ci]
+
+TASK [jenkins : CONFIG | Make JENKINS_HOME the jenkins user's home] ************
+ok: [rhel9-ci]
+
+TASK [jenkins : CONFIG | Create the systemd drop-in folder] ********************
+ok: [rhel9-ci]
+
+TASK [jenkins : CONFIG | Install the systemd override (home, port, JVM, JCasC, Podman runtime dir)] ***
+ok: [rhel9-ci]
+
+TASK [jenkins : CONFIG | Write the plugin list] ********************************
+ok: [rhel9-ci]
+
+TASK [jenkins : CONFIG | Write the JCasC file] *********************************
+ok: [rhel9-ci]
+
+TASK [jenkins : SERVICE | Install plugins and apply changes before the start] ***
+
+TASK [jenkins : SERVICE | Start and enable Jenkins] ****************************
+ok: [rhel9-ci]
+
+TASK [jenkins : SERVICE | Open the Jenkins port] *******************************
+ok: [rhel9-ci]
+
+PLAY RECAP *********************************************************************
+rhel9-ci                   : ok=20   changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+
